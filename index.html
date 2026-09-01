@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30-Day Fat Loss Tracker</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --success-color: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        /* Stats Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .stat-card .value {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .stat-card input {
+            width: 80px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--accent-color);
+            color: var(--text-main);
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .stat-card input:focus {
+            outline: none;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 12px;
+            background-color: var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        /* Calendar Grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 10px;
+        }
+
+        .day-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            aspect-ratio: 1;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.1s, border-color 0.2s;
+            position: relative;
+        }
+
+        .day-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+        }
+
+        .day-card.logged {
+            border-color: var(--success-color);
+        }
+
+        .day-card.has-weight {
+            box-shadow: 0 0 0 1px var(--accent-color);
+        }
+
+        .day-number {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .badge-weight {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--accent-color);
+            font-size: 0.65rem;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .day-summary {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .day-summary div {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-clear {
+            background-color: #ef4444;
+            color: white;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>30-Day Fat Loss Tracker</h1>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">Start Weight</div>
+            <input type="number" id="start-weight" step="0.1" placeholder="0.0"> kg
+        </div>
+        <div class="stat-card">
+            <div class="label">Current Weight</div>
+            <div class="value" id="current-weight">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Goal Weight</div>
+            <input type="number" id="goal-weight" step="0.1" placeholder="0.0"> kg
+        </div>
+    </div>
+
+    <div class="progress-section">
+        <div class="progress-labels">
+            <span>Progress</span>
+            <span id="progress-text">0 / 30 Days Logged</span>
+        </div>
+        <div class="bar-container">
+            <div class="bar-fill" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="grid-container" id="grid"></div>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3 id="modal-title">Log Day 1</h3>
+        
+        <div class="form-group">
+            <label>Calories Eaten (kcal)</label>
+            <input type="number" id="input-calories" placeholder="e.g. 2000">
+        </div>
+
+        <div class="form-group">
+            <label>Protein (g)</label>
+            <input type="number" id="input-protein" placeholder="e.g. 150">
+        </div>
+
+        <div class="form-group">
+            <label>Walking Distance (km)</label>
+            <input type="number" id="input-walk" step="0.1" placeholder="e.g. 5.5">
+        </div>
+
+        <div class="form-group">
+            <label>Burned via Exercise (kcal)</label>
+            <input type="number" id="input-burn" placeholder="e.g. 400">
+        </div>
+
+        <div class="form-group">
+            <label>Weekly Weight Check-in (kg)</label>
+            <input type="number" id="input-weight" step="0.1" placeholder="Leave blank if not weighing today">
+        </div>
+
+        <div class="modal-buttons">
+            <button class="btn btn-clear" id="btn-clear" onclick="clearDayData()">Clear</button>
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveDayData()">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const TOTAL_DAYS = 30;
+    let selectedDay = null;
+
+    // Load initial data
+    let trackerData = JSON.parse(localStorage.getItem('fatLossData')) || {
+        startWeight: 80,
+        goalWeight: 70,
+        days: {}
+    };
+
+    // UI elements
+    const startWeightInput = document.getElementById('start-weight');
+    const goalWeightInput = document.getElementById('goal-weight');
+    const currentWeightDisplay = document.getElementById('current-weight');
+    const progressText = document.getElementById('progress-text');
+    const progressBar = document.getElementById('progress-bar');
+    const grid = document.getElementById('grid');
+    const modal = document.getElementById('modal');
+
+    // Initialize Page
+    function init() {
+        startWeightInput.value = trackerData.startWeight || '';
+        goalWeightInput.value = trackerData.goalWeight || '';
+
+        startWeightInput.addEventListener('change', () => {
+            trackerData.startWeight = parseFloat(startWeightInput.value) || 0;
+            saveData();
+            updateHeader();
+        });
+
+        goalWeightInput.addEventListener('change', () => {
+            trackerData.goalWeight = parseFloat(goalWeightInput.value) || 0;
+            saveData();
+        });
+
+        renderGrid();
+        updateHeader();
+        updateProgress();
+    }
+
+    function saveData() {
+        localStorage.setItem('fatLossData', JSON.stringify(trackerData));
+    }
+
+    function renderGrid() {
+        grid.innerHTML = '';
+        for (let i = 1; i <= TOTAL_DAYS; i++) {
+            const dayData = trackerData.days[i];
+            const card = document.createElement('div');
+            card.className = 'day-card';
+            
+            const isLogged = dayData && Object.keys(dayData).some(k => dayData[k] !== '' && dayData[k] !== null);
+            if (isLogged) card.classList.add('logged');
+
+            let weightBadge = '';
+            if (dayData && dayData.weight) {
+                card.classList.add('has-weight');
+                weightBadge = `<div class="badge-weight">${dayData.weight}kg</div>`;
+            }
+
+            let summaryHtml = '';
+            if (dayData) {
+                if (dayData.calories) summaryHtml += `<div>🔥 ${dayData.calories} kcal</div>`;
+                if (dayData.protein) summaryHtml += `<div>🥩 ${dayData.protein}g P</div>`;
+            }
+
+            card.innerHTML = `
+                ${weightBadge}
+                <div class="day-number">Day ${i}</div>
+                <div class="day-summary">${summaryHtml}</div>
+            `;
+
+            card.onclick = () => openModal(i);
+            grid.appendChild(card);
+        }
+    }
+
+    function updateHeader() {
+        let latestWeight = trackerData.startWeight;
+        
+        // Find the latest logged weight from day 1 to 30
+        for (let i = 1; i <= TOTAL_DAYS; i++) {
+            if (trackerData.days[i] && trackerData.days[i].weight) {
+                latestWeight = trackerData.days[i].weight;
+            }
+        }
+
+        currentWeightDisplay.textContent = latestWeight ? `${latestWeight} kg` : '--';
+    }
+
+    function updateProgress() {
+        let loggedCount = 0;
+        for (let i = 1; i <= TOTAL_DAYS; i++) {
+            const day = trackerData.days[i];
+            if (day && Object.keys(day).some(k => day[k] !== '' && day[k] !== null)) {
+                loggedCount++;
+            }
+        }
+
+        progressText.textContent = `${loggedCount} / ${TOTAL_DAYS} Days Logged`;
+        const percentage = (loggedCount / TOTAL_DAYS) * 100;
+        progressBar.style.width = `${percentage}%`;
+    }
+
+    function openModal(day) {
+        selectedDay = day;
+        document.getElementById('modal-title').textContent = `Log Day ${day}`;
+        
+        const dayData = trackerData.days[day] || {};
+        document.getElementById('input-calories').value = dayData.calories || '';
+        document.getElementById('input-protein').value = dayData.protein || '';
+        document.getElementById('input-walk').value = dayData.walk || '';
+        document.getElementById('input-burn').value = dayData.burn || '';
+        document.getElementById('input-weight').value = dayData.weight || '';
+
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        selectedDay = null;
+    }
+
+    function saveDayData() {
+        if (!selectedDay) return;
+
+        const calories = document.getElementById('input-calories').value;
+        const protein = document.getElementById('input-protein').value;
+        const walk = document.getElementById('input-walk').value;
+        const burn = document.getElementById('input-burn').value;
+        const weight = document.getElementById('input-weight').value;
+
+        trackerData.days[selectedDay] = {
+            calories: calories ? parseFloat(calories) : null,
+            protein: protein ? parseFloat(protein) : null,
+            walk: walk ? parseFloat(walk) : null,
+            burn: burn ? parseFloat(burn) : null,
+            weight: weight ? parseFloat(weight) : null
+        };
+
+        saveData();
+        renderGrid();
+        updateHeader();
+        updateProgress();
+        closeModal();
+    }
+
+    function clearDayData() {
+        if (!selectedDay) return;
+        delete trackerData.days[selectedDay];
+        saveData();
+        renderGrid();
+        updateHeader();
+        updateProgress();
+        closeModal();
+    }
+
+    // Initialize on load
+    init();
+</script>
+
+</body>
+</html>
