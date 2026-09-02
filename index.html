@@ -18,6 +18,7 @@
         <button class="tab-btn" id="tab-gym-btn">🏋️‍♂️ Gym & Treadmill</button>
     </nav>
 
+    <!-- SECTION 1: FAT LOSS TRACKER -->
     <main id="fatloss-section" class="tab-content active">
         <header class="app-header">
             <div class="badge-tag">30-DAY CHALLENGE</div>
@@ -75,6 +76,7 @@
         <div class="grid-container" id="grid"></div>
     </main>
 
+    <!-- SECTION 2: GYM & TREADMILL TRACKER -->
     <main id="gym-section" class="tab-content">
         <header class="app-header">
             <div class="badge-tag">CUTTING PROGRAM</div>
@@ -86,6 +88,7 @@
             <h2>Jadwal Latihan Beban (3x Seminggu)</h2>
             
             <div class="schedule-grid-purple">
+                <!-- Day 1 -->
                 <div class="purple-workout-card">
                     <div class="purple-card-header">
                         <h3>Upper Body</h3>
@@ -119,6 +122,7 @@
                     </ul>
                 </div>
 
+                <!-- Day 2 -->
                 <div class="purple-workout-card">
                     <div class="purple-card-header">
                         <h3>Lower Body</h3>
@@ -152,6 +156,7 @@
                     </ul>
                 </div>
 
+                <!-- Day 3 -->
                 <div class="purple-workout-card">
                     <div class="purple-card-header">
                         <h3>Full Body & Core</h3>
@@ -182,6 +187,7 @@
                 </div>
             </div>
 
+            <!-- Treadmill Special Card -->
             <div class="cardio-special-card clickable-exercise" data-type="treadmill" data-exercise="Treadmill Cardio">
                 <div class="cardio-icon">🏃‍♀️</div>
                 <div class="cardio-info">
@@ -194,36 +200,29 @@
     </main>
 </div>
 
+<!-- Modal 1: Daily Log (English Version) -->
 <div class="modal" id="modal">
     <div class="modal-content">
         <div class="modal-header">
             <div>
-                <span class="modal-subtitle">Log Entry</span>
+                <span class="modal-subtitle">LOG ENTRY</span>
                 <h3 id="modal-title">Day 1</h3>
             </div>
             <button class="btn-close" id="btn-close">&times;</button>
         </div>
         
-        <div class="form-grid">
+        <div class="modal-form-single">
             <div class="form-group">
                 <label>Calories Eaten</label>
                 <div class="input-box">
-                    <input type="number" id="input-calories" placeholder="e.g. 1700">
+                    <input type="number" id="input-calories" placeholder="e.g. 1500">
                     <span class="unit">kcal</span>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Exercise Burned</label>
-                <div class="input-box">
-                    <input type="number" id="input-burn" placeholder="e.g. 400">
-                    <span class="unit">kcal</span>
-                </div>
-            </div>
-
-            <div class="form-group full-width deficit-box">
-                <span>Estimasi Defisit Kalori:</span>
-                <strong id="deficit-value">0 kcal</strong>
+            <div class="deficit-box">
+                <span>Calorie Deficit / Remaining:</span>
+                <strong id="deficit-value">1700 kcal</strong>
             </div>
 
             <div class="form-group">
@@ -235,15 +234,7 @@
             </div>
 
             <div class="form-group">
-                <label>Walking Distance</label>
-                <div class="input-box">
-                    <input type="number" id="input-walk" step="0.1" placeholder="e.g. 5.5">
-                    <span class="unit">km</span>
-                </div>
-            </div>
-
-            <div class="form-group full-width">
-                <label>Water Intake (Target: 2000 ml)</label>
+                <label>Water Intake (Goal: 2000 ml)</label>
                 <div class="water-control">
                     <button class="btn-water" id="btn-water-minus">-250ml</button>
                     <span id="water-display">0 ml</span>
@@ -251,7 +242,7 @@
                 </div>
             </div>
 
-            <div class="form-group full-width">
+            <div class="form-group">
                 <label>Weekly Weight Check-in</label>
                 <div class="input-box">
                     <input type="number" id="input-weight" step="0.1" placeholder="Leave blank if not weighing today">
@@ -268,6 +259,7 @@
     </div>
 </div>
 
+<!-- Modal 2: Log Gym Progress -->
 <div class="modal" id="gym-modal">
     <div class="modal-content modal-large">
         <div class="modal-header">
@@ -324,6 +316,7 @@
     </div>
 </div>
 
+<!-- Modal 3: Log Treadmill -->
 <div class="modal" id="treadmill-modal">
     <div class="modal-content modal-large">
         <div class="modal-header">
@@ -353,7 +346,7 @@
             </div>
         </div>
 
-        <button class="btn btn-primary" id="btn-save-tm-modal" style="background: #01b574;">Simpan Entry Treadmill</button>
+        <button class="btn btn-primary" id="btn-save-tm-modal">Simpan Entry Treadmill</button>
 
         <div class="chart-container-modal">
             <h4>Grafik Progress Cardio (Time, Incline, Speed)</h4>
