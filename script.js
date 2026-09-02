@@ -30,7 +30,6 @@ const grid = document.getElementById('grid');
 const modal = document.getElementById('modal');
 
 const inputCalories = document.getElementById('input-calories');
-const inputBurn = document.getElementById('input-burn');
 const deficitValue = document.getElementById('deficit-value');
 const waterDisplay = document.getElementById('water-display');
 
@@ -58,7 +57,6 @@ function init() {
     });
 
     inputCalories.addEventListener('input', calculateDeficit);
-    inputBurn.addEventListener('input', calculateDeficit);
 
     document.getElementById('btn-water-plus').addEventListener('click', () => updateWater(250));
     document.getElementById('btn-water-minus').addEventListener('click', () => updateWater(-250));
@@ -176,10 +174,12 @@ function openModal(day) {
     
     const dayData = trackerData.days[day] || {};
     inputCalories.value = dayData.calories || '';
-    document.getElementById('input-protein').value = dayData.protein || '';
-    document.getElementById('input-walk').value = dayData.walk || '';
-    inputBurn.value = dayData.burn || '';
-    document.getElementById('input-weight').value = dayData.weight || '';
+    
+    const inputProtein = document.getElementById('input-protein');
+    const inputWeight = document.getElementById('input-weight');
+    
+    if (inputProtein) inputProtein.value = dayData.protein || '';
+    if (inputWeight) inputWeight.value = dayData.weight || '';
     
     currentWater = dayData.water || 0;
     waterDisplay.textContent = `${currentWater} ml`;
@@ -193,15 +193,22 @@ function closeModal() {
     selectedDay = null;
 }
 
+// Hitung Defisit Kalori berbasis Target 1700 kcal
 function calculateDeficit() {
     const eaten = parseFloat(inputCalories.value) || 0;
-    const burned = parseFloat(inputBurn.value) || 0;
-    const tdee = 1700;
-    const totalOut = tdee + burned;
-    const deficit = totalOut - eaten;
+    const targetCalories = 1700;
+    const remaining = targetCalories - eaten;
 
-    deficitValue.textContent = `${deficit > 0 ? '-' + deficit : '+' + Math.abs(deficit)} kcal`;
-    deficitValue.style.color = deficit >= 0 ? '#01b574' : '#ee5d50';
+    if (eaten === 0) {
+        deficitValue.textContent = `1700 kcal`;
+        deficitValue.style.color = '#9273b1';
+    } else if (remaining >= 0) {
+        deficitValue.textContent = `-${remaining} kcal deficit`;
+        deficitValue.style.color = '#749f87'; // Sage Green
+    } else {
+        deficitValue.textContent = `+${Math.abs(remaining)} kcal over`;
+        deficitValue.style.color = '#e092a1'; // Rose Pink
+    }
 }
 
 function updateWater(amount) {
@@ -212,12 +219,13 @@ function updateWater(amount) {
 function saveDayData() {
     if (!selectedDay) return;
 
+    const inputProtein = document.getElementById('input-protein');
+    const inputWeight = document.getElementById('input-weight');
+
     trackerData.days[selectedDay] = {
         calories: inputCalories.value ? parseFloat(inputCalories.value) : null,
-        protein: document.getElementById('input-protein').value ? parseFloat(document.getElementById('input-protein').value) : null,
-        walk: document.getElementById('input-walk').value ? parseFloat(document.getElementById('input-walk').value) : null,
-        burn: inputBurn.value ? parseFloat(inputBurn.value) : null,
-        weight: document.getElementById('input-weight').value ? parseFloat(document.getElementById('input-weight').value) : null,
+        protein: inputProtein && inputProtein.value ? parseFloat(inputProtein.value) : null,
+        weight: inputWeight && inputWeight.value ? parseFloat(inputWeight.value) : null,
         water: currentWater
     };
 
@@ -247,10 +255,15 @@ function openGymModal(exercise) {
 }
 
 function saveGymModalLog() {
-    const date = document.getElementById('modal-gym-date').value || `Sesi ${(trackerData.gymLogs[currentExerciseName] || []).length + 1}`;
-    const sets = parseInt(document.getElementById('modal-gym-sets').value) || 3;
-    const reps = parseInt(document.getElementById('modal-gym-reps').value) || 0;
-    const weight = parseFloat(document.getElementById('modal-gym-weight').value) || 0;
+    const dateInput = document.getElementById('modal-gym-date');
+    const setsInput = document.getElementById('modal-gym-sets');
+    const repsInput = document.getElementById('modal-gym-reps');
+    const weightInput = document.getElementById('modal-gym-weight');
+
+    const date = dateInput.value || `Sesi ${(trackerData.gymLogs[currentExerciseName] || []).length + 1}`;
+    const sets = parseInt(setsInput.value) || 3;
+    const reps = parseInt(repsInput.value) || 0;
+    const weight = parseFloat(weightInput.value) || 0;
 
     if (!trackerData.gymLogs) trackerData.gymLogs = {};
     if (!trackerData.gymLogs[currentExerciseName]) trackerData.gymLogs[currentExerciseName] = [];
@@ -258,8 +271,9 @@ function saveGymModalLog() {
     trackerData.gymLogs[currentExerciseName].push({ date, sets, reps, weight });
     saveData();
 
-    document.getElementById('modal-gym-reps').value = '';
-    document.getElementById('modal-gym-weight').value = '';
+    if (repsInput) repsInput.value = '';
+    if (weightInput) weightInput.value = '';
+
     updateModalGymChart();
 }
 
@@ -273,18 +287,22 @@ function initModalGymChart() {
                 {
                     label: 'Beban (kg)',
                     data: [],
-                    borderColor: '#ff4d6d',
-                    backgroundColor: 'rgba(255, 77, 109, 0.1)',
+                    borderColor: '#e092a1', // Rose Pink
+                    backgroundColor: 'rgba(224, 146, 161, 0.15)',
                     borderWidth: 3,
+                    pointBackgroundColor: '#e092a1',
+                    pointRadius: 4,
                     tension: 0.3,
                     yAxisID: 'y'
                 },
                 {
                     label: 'Total Volume (kg)',
                     data: [],
-                    borderColor: '#4318ff',
+                    borderColor: '#9273b1', // Soft Purple
                     borderWidth: 2,
                     borderDash: [5, 5],
+                    pointBackgroundColor: '#9273b1',
+                    pointRadius: 4,
                     tension: 0.3,
                     yAxisID: 'y1'
                 }
@@ -292,9 +310,17 @@ function initModalGymChart() {
         },
         options: {
             responsive: true,
+            interaction: { mode: 'index', intersect: false },
             scales: {
-                y: { type: 'linear', position: 'left', beginAtZero: true },
-                y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, beginAtZero: true }
+                x: { grid: { display: false } },
+                y: {
+                    type: 'linear', display: true, position: 'left', beginAtZero: true,
+                    grid: { color: '#e8eee9' }
+                },
+                y1: {
+                    type: 'linear', display: true, position: 'right', beginAtZero: true,
+                    grid: { drawOnChartArea: false }
+                }
             }
         }
     });
@@ -303,6 +329,30 @@ function initModalGymChart() {
 function updateModalGymChart() {
     const logs = trackerData.gymLogs ? (trackerData.gymLogs[currentExerciseName] || []) : [];
     
+    // Hitung Angka Ringkasan Stats di Atas Grafik
+    const totalSessions = logs.length;
+    let maxWeight = 0;
+    let maxVolume = 0;
+
+    logs.forEach(l => {
+        const w = parseFloat(l.weight) || 0;
+        const s = parseInt(l.sets) || 0;
+        const r = parseInt(l.reps) || 0;
+
+        if (w > maxWeight) maxWeight = w;
+        
+        const vol = s * r * (w || 1);
+        if (vol > maxVolume) maxVolume = vol;
+    });
+
+    const statSessions = document.getElementById('stat-total-sessions');
+    const statWeight = document.getElementById('stat-max-weight');
+    const statVolume = document.getElementById('stat-max-volume');
+
+    if (statSessions) statSessions.textContent = totalSessions;
+    if (statWeight) statWeight.textContent = `${maxWeight} kg`;
+    if (statVolume) statVolume.textContent = `${maxVolume} kg`;
+
     if (modalGymChart) {
         modalGymChart.data.labels = logs.map(l => l.date);
         modalGymChart.data.datasets[0].data = logs.map(l => l.weight);
@@ -344,21 +394,21 @@ function initModalTreadmillChart() {
                 {
                     label: 'Durasi (Menit)',
                     data: [],
-                    borderColor: '#4318ff',
+                    borderColor: '#9273b1',
                     borderWidth: 3,
                     tension: 0.3
                 },
                 {
                     label: 'Incline',
                     data: [],
-                    borderColor: '#01b574',
+                    borderColor: '#749f87',
                     borderWidth: 3,
                     tension: 0.3
                 },
                 {
                     label: 'Speed (km/h)',
                     data: [],
-                    borderColor: '#ff9f43',
+                    borderColor: '#e092a1',
                     borderWidth: 3,
                     tension: 0.3
                 }
@@ -367,7 +417,8 @@ function initModalTreadmillChart() {
         options: {
             responsive: true,
             scales: {
-                y: { beginAtZero: true }
+                x: { grid: { display: false } },
+                y: { beginAtZero: true, grid: { color: '#e8eee9' } }
             }
         }
     });
