@@ -3,75 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>30-Day Fat Loss Tracker</title>
+    <title>30-Day Fat Loss & Gym Tracker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="container">
-    <header class="app-header">
-        <div class="badge-tag">30-DAY CHALLENGE</div>
-        <h1>Fat Loss Tracker</h1>
-        <p class="subtitle">Consistency is key. Track your daily habits and progress.</p>
-    </header>
+    <nav class="nav-tabs">
+        <button class="tab-btn active" id="tab-fatloss-btn">🔥 Fat Loss Tracker</button>
+        <button class="tab-btn" id="tab-gym-btn">🏋️‍♂️ Gym & Treadmill</button>
+    </nav>
 
-    <!-- Top Stats -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon">⚖️</div>
-            <div class="stat-info">
-                <span class="label">Start Weight</span>
-                <div class="input-wrapper">
-                    <input type="number" id="start-weight" step="0.1" placeholder="0.0">
-                    <span class="unit">kg</span>
+    <main id="fatloss-section" class="tab-content active">
+        <header class="app-header">
+            <div class="badge-tag">30-DAY CHALLENGE</div>
+            <h1>Fat Loss Tracker</h1>
+            <p class="subtitle">Consistency is key. Track your daily habits and progress.</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-info">
+                    <span class="label">Start Weight</span>
+                    <div class="input-wrapper">
+                        <input type="number" id="start-weight" step="0.1" placeholder="0.0">
+                        <span class="unit">kg</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card highlight">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-info">
+                    <span class="label">Current Weight</span>
+                    <div class="value" id="current-weight">--</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-info">
+                    <span class="label">Goal Weight</span>
+                    <div class="input-wrapper">
+                        <input type="number" id="goal-weight" step="0.1" placeholder="0.0">
+                        <span class="unit">kg</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="stat-card highlight">
-            <div class="stat-icon">🔥</div>
-            <div class="stat-info">
-                <span class="label">Current Weight</span>
-                <div class="value" id="current-weight">--</div>
+
+        <div class="progress-section">
+            <div class="progress-header">
+                <div>
+                    <h3>Challenge Progress</h3>
+                    <p class="progress-sub" id="progress-text">0 / 30 Days Logged</p>
+                </div>
+                <div class="percentage-badge" id="progress-percent">0%</div>
+            </div>
+            <div class="bar-container">
+                <div class="bar-fill" id="progress-bar"></div>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon">🎯</div>
-            <div class="stat-info">
-                <span class="label">Goal Weight</span>
-                <div class="input-wrapper">
-                    <input type="number" id="goal-weight" step="0.1" placeholder="0.0">
-                    <span class="unit">kg</span>
+
+        <div class="grid-header">
+            <h2>Daily Logs</h2>
+            <span class="grid-hint">Tap a day to view or edit</span>
+        </div>
+        <div class="grid-container" id="grid"></div>
+    </main>
+
+    <main id="gym-section" class="tab-content">
+        <header class="app-header">
+            <div class="badge-tag">CUTTING PROGRAM</div>
+            <h1>Jadwal & Log Gym</h1>
+            <p class="subtitle">Klik pada salah satu gerakan untuk mencatat progress & melihat grafik</p>
+        </header>
+
+        <section class="schedule-container">
+            <h2>Jadwal Latihan Beban (3x Seminggu)</h2>
+            
+            <div class="schedule-grid-purple">
+                <div class="purple-workout-card">
+                    <div class="purple-card-header">
+                        <h3>Upper Body</h3>
+                        <span>Hari 1</span>
+                    </div>
+                    <ul class="purple-workout-list">
+                        <li class="clickable-exercise" data-exercise="Dumbbell Bench Press">
+                            <strong>Dumbbell Bench Press</strong>
+                            <span>3 set x 8-12 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Lat Pulldown">
+                            <strong>Lat Pulldown</strong>
+                            <span>3 set x 10-12 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Dumbbell Shoulder Press">
+                            <strong>Dumbbell Shoulder Press</strong>
+                            <span>3 set x 10-12 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Seated Cable Row">
+                            <strong>Seated Cable Row</strong>
+                            <span>3 set x 10-12 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Hanging Leg Raise">
+                            <strong>Hanging Leg Raise</strong>
+                            <span>3 set x 12-15 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Russian Twist">
+                            <strong>Russian Twist</strong>
+                            <span>3 set x 20 reps</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="purple-workout-card">
+                    <div class="purple-card-header">
+                        <h3>Lower Body</h3>
+                        <span>Hari 2</span>
+                    </div>
+                    <ul class="purple-workout-list">
+                        <li class="clickable-exercise" data-exercise="Barbell Squat / Leg Press">
+                            <strong>Barbell Squat / Leg Press</strong>
+                            <span>3 set x 8-10 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Romanian Deadlift">
+                            <strong>Romanian Deadlift (RDL)</strong>
+                            <span>3 set x 10-12 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Walking Lunges">
+                            <strong>Walking Lunges</strong>
+                            <span>3 set x 10 langkah</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Calf Raises">
+                            <strong>Calf Raises</strong>
+                            <span>4 set x 15 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Elbow Plank">
+                            <strong>Elbow Plank</strong>
+                            <span>3 set x 45-60 detik</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Bicycle Crunches">
+                            <strong>Bicycle Crunches</strong>
+                            <span>3 set x 15-20 reps</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="purple-workout-card">
+                    <div class="purple-card-header">
+                        <h3>Full Body & Core</h3>
+                        <span>Hari 3</span>
+                    </div>
+                    <ul class="purple-workout-list">
+                        <li class="clickable-exercise" data-exercise="Dumbbell Incline Press">
+                            <strong>Dumbbell Incline Press</strong>
+                            <span>3 set x 10-12 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Face Pulls">
+                            <strong>Face Pulls</strong>
+                            <span>3 set x 12-15 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Goblet Squat">
+                            <strong>Goblet Squat</strong>
+                            <span>3 set x 12 reps</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Side Plank">
+                            <strong>Side Plank</strong>
+                            <span>3 set x 30 detik</span>
+                        </li>
+                        <li class="clickable-exercise" data-exercise="Ab Wheel Rollout">
+                            <strong>Ab Wheel Rollout</strong>
+                            <span>3 set x 12-15 reps</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Progress Bar Section -->
-    <div class="progress-section">
-        <div class="progress-header">
-            <div>
-                <h3>Challenge Progress</h3>
-                <p class="progress-sub" id="progress-text">0 / 30 Days Logged</p>
+            <div class="cardio-special-card clickable-exercise" data-type="treadmill" data-exercise="Treadmill Cardio">
+                <div class="cardio-icon">🏃‍♀️</div>
+                <div class="cardio-info">
+                    <h3>Daily Cardio: Treadmill & Incline</h3>
+                    <p>Lakukan 15-20 menit setiap selesai sesi latihan beban. <strong>Klik di sini untuk log progress & lihat grafik!</strong></p>
+                </div>
+                <div class="cardio-arrow">➔</div>
             </div>
-            <div class="percentage-badge" id="progress-percent">0%</div>
-        </div>
-        <div class="bar-container">
-            <div class="bar-fill" id="progress-bar"></div>
-        </div>
-    </div>
-
-    <!-- 30-Day Grid Section -->
-    <div class="grid-header">
-        <h2>Daily Logs</h2>
-        <span class="grid-hint">Tap a day to view or edit</span>
-    </div>
-    <div class="grid-container" id="grid"></div>
+        </section>
+    </main>
 </div>
 
-<!-- Modal Dialog -->
 <div class="modal" id="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -86,15 +208,28 @@
             <div class="form-group">
                 <label>Calories Eaten</label>
                 <div class="input-box">
-                    <input type="number" id="input-calories" placeholder="e.g. 2000">
+                    <input type="number" id="input-calories" placeholder="e.g. 1700">
                     <span class="unit">kcal</span>
                 </div>
             </div>
 
             <div class="form-group">
+                <label>Exercise Burned</label>
+                <div class="input-box">
+                    <input type="number" id="input-burn" placeholder="e.g. 400">
+                    <span class="unit">kcal</span>
+                </div>
+            </div>
+
+            <div class="form-group full-width deficit-box">
+                <span>Estimasi Defisit Kalori:</span>
+                <strong id="deficit-value">0 kcal</strong>
+            </div>
+
+            <div class="form-group">
                 <label>Protein Intake</label>
                 <div class="input-box">
-                    <input type="number" id="input-protein" placeholder="e.g. 150">
+                    <input type="number" id="input-protein" placeholder="e.g. 100">
                     <span class="unit">g</span>
                 </div>
             </div>
@@ -107,11 +242,12 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Exercise Burned</label>
-                <div class="input-box">
-                    <input type="number" id="input-burn" placeholder="e.g. 400">
-                    <span class="unit">kcal</span>
+            <div class="form-group full-width">
+                <label>Water Intake (Target: 2000 ml)</label>
+                <div class="water-control">
+                    <button class="btn-water" id="btn-water-minus">-250ml</button>
+                    <span id="water-display">0 ml</span>
+                    <button class="btn-water" id="btn-water-plus">+250ml</button>
                 </div>
             </div>
 
@@ -128,6 +264,100 @@
             <button class="btn btn-clear" id="btn-clear">Clear Day</button>
             <button class="btn btn-secondary" id="btn-cancel">Cancel</button>
             <button class="btn btn-primary" id="btn-save">Save Entry</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="gym-modal">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <div>
+                <span class="modal-subtitle">PROGRESS TRACKER</span>
+                <h3 id="gym-modal-title">Dumbbell Bench Press</h3>
+            </div>
+            <button class="btn-close" id="gym-modal-close">&times;</button>
+        </div>
+
+        <div class="modal-stats-row">
+            <div class="m-stat-card">
+                <span class="m-stat-label">Total Sesi</span>
+                <strong class="m-stat-value" id="stat-total-sessions">0</strong>
+            </div>
+            <div class="m-stat-card">
+                <span class="m-stat-label">Beban Tertinggi</span>
+                <strong class="m-stat-value" id="stat-max-weight">0 kg</strong>
+            </div>
+            <div class="m-stat-card">
+                <span class="m-stat-label">Best Volume</span>
+                <strong class="m-stat-value" id="stat-max-volume">0 kg</strong>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Tanggal / Sesi</label>
+                <input type="text" id="modal-gym-date" class="modal-input" placeholder="e.g. Sesi 1">
+            </div>
+            <div class="form-group">
+                <label>Jumlah Set</label>
+                <input type="number" id="modal-gym-sets" class="modal-input" placeholder="3">
+            </div>
+            <div class="form-group">
+                <label>Jumlah Reps</label>
+                <input type="number" id="modal-gym-reps" class="modal-input" placeholder="12">
+            </div>
+            <div class="form-group">
+                <label>Beban (kg)</label>
+                <input type="number" id="modal-gym-weight" class="modal-input" placeholder="e.g. 50">
+            </div>
+        </div>
+
+        <button class="btn btn-primary" id="btn-save-gym-modal">Simpan Entry & Update Grafik</button>
+
+        <div class="chart-container-modal">
+            <div class="chart-modal-header">
+                <h4>Activity Progress</h4>
+                <span class="chart-subtext">Data updates automatically</span>
+            </div>
+            <canvas id="modalGymChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="treadmill-modal">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <div>
+                <span class="modal-subtitle">LOG PROGRESS CARDIO</span>
+                <h3>HIIT Treadmill / Incline</h3>
+            </div>
+            <button class="btn-close" id="treadmill-modal-close">&times;</button>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Tanggal / Sesi</label>
+                <input type="text" id="modal-tm-date" class="modal-input" placeholder="e.g. Sesi 1">
+            </div>
+            <div class="form-group">
+                <label>Durasi (Menit)</label>
+                <input type="number" id="modal-tm-time" class="modal-input" placeholder="e.g. 20">
+            </div>
+            <div class="form-group">
+                <label>Incline (Kemiringan)</label>
+                <input type="number" id="modal-tm-incline" step="0.5" class="modal-input" placeholder="e.g. 10.0">
+            </div>
+            <div class="form-group">
+                <label>Speed (km/h)</label>
+                <input type="number" id="modal-tm-speed" step="0.1" class="modal-input" placeholder="e.g. 4.5">
+            </div>
+        </div>
+
+        <button class="btn btn-primary" id="btn-save-tm-modal" style="background: #01b574;">Simpan Entry Treadmill</button>
+
+        <div class="chart-container-modal">
+            <h4>Grafik Progress Cardio (Time, Incline, Speed)</h4>
+            <canvas id="modalTreadmillChart"></canvas>
         </div>
     </div>
 </div>
