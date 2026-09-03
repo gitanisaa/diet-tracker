@@ -269,6 +269,9 @@ body {
 }
 
 /* Purple Cards Schedule */
+.schedule-container h2{
+    height: 50px;
+}
 .schedule-grid-purple {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
